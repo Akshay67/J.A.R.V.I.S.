@@ -13,7 +13,9 @@ import psutil # pip install psutil
 import pyjokes # pip install pyjokes
 import sys
 import wolframalpha
-from pathlib import Path
+import cv2 # pip install opencv-python
+import pywhatkit as kit # pip install pywhatkit
+from requests import get
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -126,15 +128,6 @@ def jokes():
     speak(my_joke)
     speak('Next Command! Sir!')
     
-    
-    
-def music():
-    music_dir = 'D:\\Music'
-    speak('ok! playing music..')
-    songs = os.listdir(music_dir)
-    os.startfile(os.path.join(music_dir, songs[0]))
-    speak('Next Command! Sir!')
-    
 
     
 def takeCommand():
@@ -166,18 +159,35 @@ if __name__ == "__main__":
 
         query = takeCommand().lower()
 
-        if 'open youtube' in query or 'launch youtube' in query:
-            speak('launching')
-            webbrowser.open_new_tab("youtube.com")
+        if 'open youtube' in query or 'launch youtube' in query or 'search on youtube' in query:
+            chromepath = 'C://Program Files (x86)//Google//Chrome//Application//chrome.exe %s'
+            speak('sir! what should i search on youtube!')
+            reply = takeCommand().lower()
+            if 'open youtube' in reply or 'launch youtube' in reply :
+                speak('launching')
+                webbrowser.get(chromepath).open_new_tab("www.youtube.com")
+            else :
+                speak('searching!')
+                kit.playonyt(reply)
+
             speak('Next Command! Sir!')
             
             
 
         elif 'open google' in query or 'launch google' in query or 'launch chrome' in query or 'open chrome' in query:
-            speak('launching')
-            webbrowser.open_new_tab("google.com")
+            chromepath = 'C://Program Files (x86)//Google//Chrome//Application//chrome.exe %s'
+            speak('sir! what should i search on google!')
+            reply = takeCommand().lower()
+            if 'open google' in reply or 'open chrome' in reply :
+                speak('launching')
+                webbrowser.get(chromepath).open_new_tab("google.com")
+            else :
+                speak('searching!')
+                webbrowser.get(chromepath).open_new_tab('www.google.com/#q='+reply)
+
             speak('Next Command! Sir!')
             
+
             
 
         elif 'open gmail' in query or 'launch gmail' in query:
@@ -233,10 +243,6 @@ if __name__ == "__main__":
             
             
             
-        elif 'play music' in query :
-            music()
-            
-            
             
         elif 'search on chrome' in query or 'search on google' in query or 'chrome search' in query or 'google search' in query:
             chrome()
@@ -290,8 +296,8 @@ if __name__ == "__main__":
             
             
 
-        elif 'according to google' in query:
-            speak('okay sir! searching! ')
+        elif 'according to google' in query or 'according to chrome' in query:
+            speak('searching! ')
             chromepath = 'C://Program Files (x86)//Google//Chrome//Application//chrome.exe %s'
             
             query = query.replace('according to google','')
@@ -307,10 +313,34 @@ if __name__ == "__main__":
             speak('Next Command! Sir!')
             
             
+
+            
+            
+            
+        elif 'according to wikipedia' in query:
+            speak('searching! ')
+            chromepath = 'C://Program Files (x86)//Google//Chrome//Application//chrome.exe %s'
+            
+            query = query.replace('according to wikipedia','')
+            results = wikipedia.summary(query, sentences = 3)
+            
+            speak('Got it sir! ')     
+            speak('wikipedia says - ')
+            print(results)
+            webbrowser.get(chromepath).open_new_tab('www.google.com/#q='+query)
+            speak(results)
+            
+            speak(f"sir! i also opened result on google! if you want extra information about {query}.. you can visit there!")
+            speak('Next Command! Sir!')
+            
+            
+
+            
+            
             
             
         
-        elif 'exit' in query or 'quit' in query or 'abort' in query or 'stop' in query or 'bye' in query:
+        elif 'exit' in query or 'quit' in query or 'abort' in query or 'stop' in query or 'bye' in query or 'no thanks' in query or 'no commands' in query:
             speak('bye sir. have a good day! thank you..')
             break
             
@@ -400,6 +430,16 @@ if __name__ == "__main__":
             speak('launching..')
             m_path = "D:\\Music"
             os.startfile(m_path)
+            speak('Next Command! Sir!')
+            
+            
+            
+        elif 'play music' in query or 'hit music' in query or 'play songs' in query or 'hit songs' in query :
+            speak('playing..')
+            music_dir = "D:\\Music"
+            songs = os.listdir(music_dir)
+            rd = random.choice(songs)
+            os.startfile(os.path.join(music_dir, rd))
             speak('Next Command! Sir!')
             
             
@@ -500,12 +540,11 @@ if __name__ == "__main__":
             
         elif 'open command prompt' in query or 'open cmd' in query or 'launch command prompt' in query or 'launch cmd' in query or 'open terminal' in query or 'launch terminal' in query:
             speak('launching..')
-            f_path = "%windir%\\system32\\cmd.exe"
-            os.startfile(f_path)
+            os.system('start')
             speak('Next Command! Sir!')
             
             
-        elif 'open word' in query or 'open microsoft word' in query or 'launch word' in query or 'launch microsoft word' in query or 'open ms word' in query or 'launch ms word' in query or 'word document' in query:
+        elif 'open microsoft word' in query or 'launch microsoft word' in query or 'launch ms word' in query or 'word document' in query or 'open ms word' in query:
             speak('launching..')
             f_path = "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE"
             os.startfile(f_path)
@@ -527,10 +566,56 @@ if __name__ == "__main__":
             f_path = "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\PowerPoint.exe"
             os.startfile(f_path)
             speak('Next Command! Sir!')
-        
-             
             
-
+            
+            
+            
+        elif 'open camera' in query or 'open webcam' in query or 'launch camera' in query or 'launch webcam' in query :
+            speak('launching..')
+            cap = cv2.VideoCapture(0)
+            speak('sir! hit enter key! to get out of the webcam!..')
+            while True :
+                ret, img = cap.read()
+                cv2.imshow('webcam', img)
+                if cv2.waitKey(1) == 13:
+                    break
+            cap.release()
+            cv2.destroyAllWindows()
+            speak('Next Command! Sir!')
+            
+            
+            
+            
+        elif 'my ip' in query or 'my internet protocol' in query :
+            ip = get("https://api.ipify.org").text
+            print(f"sir! your ip address is {ip}")
+            speak(f"sir! your ip address is {ip}")
+            speak('Next Command! Sir!')
+            
+            
+            
+        elif 'open calculator' in query or 'launch calculator' in query or 'open calci' in query or 'launch calci' in query:
+            speak('launching..')
+            os.system('calc')
+            speak('Next Command! Sir!')
+            
+            
+            
+        elif 'open control panel' in query or 'launch control panel' in query:
+            speak('launching..')
+            os.system('c:\Windows\System32\control')
+            speak('Next Command! Sir!')
+            
+            
+            
+        
+        elif 'open my computer' in query or 'launch my computer' in query :
+            speak('launching..')
+            os.system('explorer.exe')
+            speak('Next Command! Sir!')
+            
+                    
+        
             
         else:
             
@@ -544,6 +629,7 @@ if __name__ == "__main__":
                     speak('Got it sir!')
                     speak(results)
                     print(results)
+                    speak('next command! sir!')
 
                 except:
                     results = wikipedia.summary(query, sentences = 2)
@@ -551,11 +637,10 @@ if __name__ == "__main__":
                     speak('WIKIPEDIA says - ')
                     print(results)
                     speak(results)
+                    speak('next command! sir!')
 
 
             except:
-                speak('sorry sir! i didnt get results..! please search on google!')
-                speak('i am opening google! thank you !')
-                webbrowser.open('www.google.com')
-
-            speak('Next Command! Sir!')
+                speak('sorry sir! i did not get your command !')
+                
+            speak('pardon! sir!')
