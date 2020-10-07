@@ -16,6 +16,7 @@ import wolframalpha
 import cv2 # pip install opencv-python
 import pywhatkit as kit # pip install pywhatkit
 from requests import get
+import pyaudio #pip install PyAudio
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -23,9 +24,7 @@ engine.setProperty('voice', voices[0].id)
 
 def speak(audio):
     engine.say(audio)
-    engine.runAndWait()
-    
-
+    engine.runAndWait()   
 
 def hello():
     speak('hello sir.. how are you ?')
